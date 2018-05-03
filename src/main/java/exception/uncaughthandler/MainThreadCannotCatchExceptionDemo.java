@@ -1,4 +1,4 @@
-package exception;
+package exception.uncaughthandler;
 
 public class MainThreadCannotCatchExceptionDemo {
     public static void main(String[] args) {
@@ -20,16 +20,16 @@ public class MainThreadCannotCatchExceptionDemo {
     }
     /**
      Exception in thread "one" java.lang.ArithmeticException: / by zero
-     at exception.MyRunnable.run(MyRunnable.java:8)
+     at exception.uncaughthandler.MyRunnable.run(MyRunnable.java:8)
      at java.lang.Thread.run(Thread.java:745)
      Exception in thread "two" java.lang.ArithmeticException: / by zero
-     at exception.MyRunnable.run(MyRunnable.java:8)
+     at exception.uncaughthandler.MyRunnable.run(MyRunnable.java:8)
      at java.lang.Thread.run(Thread.java:745)
      Exception in thread "third" java.lang.ArithmeticException: / by zero
-     at exception.MyRunnable.run(MyRunnable.java:8)
+     at exception.uncaughthandler.MyRunnable.run(MyRunnable.java:8)
      at java.lang.Thread.run(Thread.java:745)
      Exception in thread "four" java.lang.ArithmeticException: / by zero
-     at exception.MyRunnable.run(MyRunnable.java:8)
+     at exception.uncaughthandler.MyRunnable.run(MyRunnable.java:8)
      at java.lang.Thread.run(Thread.java:745)
      */
 }

@@ -1,4 +1,4 @@
-package exception;
+package exception.uncaughthandler;
 
 public class UncaughtExceptionHandlerDemo {
     public static void main(String[] args) {
