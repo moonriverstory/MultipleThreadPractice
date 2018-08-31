@@ -70,7 +70,9 @@ public class MethodFive {
                  * 问题出在Collections.sort String 有bug =。=
                  */
                 Collections.sort(list);
-                list.forEach(c -> System.out.print(c));
+                for (String c: list) {
+                    System.out.print(c);
+                }
                 list.clear();
             }
             /**
