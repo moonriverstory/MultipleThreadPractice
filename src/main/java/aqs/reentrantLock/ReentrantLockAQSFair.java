@@ -12,27 +12,34 @@ public class ReentrantLockAQSFair {
     public void reentrant() {
         try {
             lock.lock();
+            System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " lock~");
             try {
                 lock.lock();
+                System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " lock~");
             } finally {
                 lock.unlock();
+                System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " unlock~");
             }
         } finally {
             lock.unlock();
+            System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " unlock~");
         }
     }
 
     public void holdingLock() {
         try {
             lock.lock();
+            System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " lock~");
             try {
-                //holding lock like forever =.=
-                Thread.sleep(Integer.MAX_VALUE);
+                //holding lock
+                System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " waiting ... hold lock~");
+                Thread.sleep(10 * 1000L);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         } finally {
             lock.unlock();
+            System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " unlock~");
         }
     }
 
@@ -64,7 +71,7 @@ public class ReentrantLockAQSFair {
             list.add(b);
         } while (i++ < 1);
 
-        for(Thread thread : list){
+        for (Thread thread : list) {
             thread.start();
         }
 
