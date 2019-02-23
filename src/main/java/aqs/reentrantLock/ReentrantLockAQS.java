@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class ReentrantLockAQSFair {
+public class ReentrantLockAQS {
 
     private Lock lock = new ReentrantLock(true);
 
@@ -45,7 +45,7 @@ public class ReentrantLockAQSFair {
 
     public static void main(String[] args) throws InterruptedException {
 
-        ReentrantLockAQSFair lockDemo = new ReentrantLockAQSFair();
+        ReentrantLockAQS lockDemo = new ReentrantLockAQS();
 
         //lockDemo.reentrant();
 
