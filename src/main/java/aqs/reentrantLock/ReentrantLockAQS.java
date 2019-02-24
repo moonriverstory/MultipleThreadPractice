@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ReentrantLockAQS {
 
-    private Lock lock = new ReentrantLock(true);
+    private Lock lock = new ReentrantLock(false);
 
     public void reentrant() {
         try {
