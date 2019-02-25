@@ -34,6 +34,7 @@ public class ReentrantLockAQS {
                 //holding lock
                 System.out.println("currentThread: " + Thread.currentThread().getName() + " thread id: " + Thread.currentThread().getId() + " waiting ... hold lock~");
                 Thread.sleep(10 * 1000L);
+                //Thread.sleep(Integer.MAX_VALUE);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -67,9 +68,17 @@ public class ReentrantLockAQS {
                 }
             }, "lit B_" + i);
 
+            Thread c = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    lockDemo.reentrant();
+                }
+            }, "lit C_" + i);
+
             list.add(a);
             list.add(b);
-        } while (i++ < 1);
+            list.add(c);
+        } while ( ++i < 1);
 
         for (Thread thread : list) {
             thread.start();
@@ -78,4 +87,18 @@ public class ReentrantLockAQS {
         Thread.sleep(3000);
         System.out.println("main over!");
     }
+    /**
+     currentThread: lit A_0 thread id: 13 lock~
+     currentThread: lit A_0 thread id: 13 waiting ... hold lock~
+     main over!
+     currentThread: lit A_0 thread id: 13 unlock~
+     currentThread: lit B_0 thread id: 14 lock~
+     currentThread: lit B_0 thread id: 14 lock~
+     currentThread: lit B_0 thread id: 14 unlock~
+     currentThread: lit B_0 thread id: 14 unlock~
+     currentThread: lit A_0 thread id: 13 lock~
+     currentThread: lit A_0 thread id: 13 lock~
+     currentThread: lit A_0 thread id: 13 unlock~
+     currentThread: lit A_0 thread id: 13 unlock~
+     */
 }
