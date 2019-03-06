@@ -12,29 +12,31 @@ import java.util.concurrent.locks.ReentrantLock;
 public class FairAndUnfairLockPerformanceTest {
     //private static Lock lock = new ReentrantLockMine(false); //非公平锁
     private static Lock lock = new ReentrantLockMine(true); //公平锁
+    //private static String lockType = "非公平锁";
+    private static String lockType = "公平锁";
 
     public static void main(String[] args) throws BrokenBarrierException, InterruptedException {
-        //String lockType = "非公平锁";
-        String lockType = "公平锁";
-
         long start = System.currentTimeMillis();
         CyclicBarrier cyclicBarrier = new CyclicBarrier(10, new Time(lockType, start)); //10个线程执行完毕时，执行Time线程统计执行时间24
         for (int i = 0; i < 10; i++) {
             Thread thread = new Thread(new Job(lock, cyclicBarrier)) {
                 public String toString() {
                     return getName();
-
                 }
             };
             thread.setName("" + i);
             thread.start();
-
         }
     }
 
     /**
      非公平锁耗时:4860
+     非公平锁耗时:4988
+     非公平锁耗时:5853
+
      公平锁耗时:9175
+     公平锁耗时:9585
+     公平锁耗时:9849
      */
 
     private static class Job implements Runnable {
