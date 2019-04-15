@@ -14,12 +14,13 @@ public class LockSupportInterruptDemo {
         }
         thread.interrupt();
     }
-}
 
-class LockSupportInterruptThread extends Thread {
-    public void run() {
-        System.out.println( Thread.currentThread().isInterrupted() );
-        LockSupport.park();
-        System.out.println( Thread.currentThread().isInterrupted() );
+    static class LockSupportInterruptThread extends Thread {
+        public void run() {
+            System.out.println( Thread.currentThread().isInterrupted() );
+            LockSupport.park();
+            System.out.println( Thread.currentThread().isInterrupted() );
+        }
     }
 }
+

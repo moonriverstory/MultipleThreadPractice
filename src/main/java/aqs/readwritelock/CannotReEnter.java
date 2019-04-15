@@ -1,7 +1,5 @@
 package aqs.readwritelock;
 
-//import aqs.reentrantLock.ReentrantLockFairDemo;
-
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -25,9 +23,9 @@ public class CannotReEnter {
 
     public static void main(String[] args) throws InterruptedException {
 
-    //    ReentrantLockFairDemo lockDemo = new ReentrantLockFairDemo();
+        CannotReEnter lockDemo = new CannotReEnter();
 
-      //  lockDemo.reentrant();
+        lockDemo.reentrant();
 
 //        int i = 0;
 //        List<Thread> list = new ArrayList<>(30);
