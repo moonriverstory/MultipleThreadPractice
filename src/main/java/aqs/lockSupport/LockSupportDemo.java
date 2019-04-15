@@ -13,24 +13,26 @@ public class LockSupportDemo {
         thread.start();
 
     }
-}
 
-class DemoLockSupport extends Thread {
-    public void run() {
-        System.out.println( "TestLockSupport.run()" );
-        LockSupport.park(  );
+    static class DemoLockSupport extends Thread {
+        public void run() {
+            System.out.println( "TestLockSupport.run()" );
+            LockSupport.park(  );
+        }
     }
-}
 
-class DemoThread extends Thread {
-    public void run() {
-        System.out.println( "TestThread.run()" );
-        synchronized (this) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+    static class DemoThread extends Thread {
+        public void run() {
+            System.out.println( "TestThread.run()" );
+            synchronized (this) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 }
+
+
