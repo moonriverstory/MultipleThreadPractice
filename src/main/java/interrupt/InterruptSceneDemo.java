@@ -167,7 +167,7 @@ public class InterruptSceneDemo {
     /**
      * 实验证明，正在运行的lockInterruptibly是不可中断的
      */
-    private void demo5ConditionInterruptDemo() {
+    private void demo5LockInterruptiblyRunningInterruptDemo() {
         final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -197,20 +197,135 @@ public class InterruptSceneDemo {
         }
         thread.interrupt();
     }
-
     /**
-     2019-12-18 15:07:20,014 INFO  [Thread-0] [InterruptSceneDemo.java:174] : entrant lockInterruptibly!
-     2019-12-18 15:07:21,017 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
-     2019-12-18 15:07:22,018 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
-     2019-12-18 15:07:23,019 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
+     * 2019-12-18 15:07:20,014 INFO  [Thread-0] [InterruptSceneDemo.java:174] : entrant lockInterruptibly!
+     * 2019-12-18 15:07:21,017 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
+     * 2019-12-18 15:07:22,018 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
+     * 2019-12-18 15:07:23,019 INFO  [Thread-0] [InterruptSceneDemo.java:179] : looping ~
      */
 
+    /**
+     * wait可中断，并且抛出InterruptedException错误~
+     */
+    private void demo6WaitInterruptDemo() {
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    synchronized (o) {
+                        log.info("entrant synchronized!");
+                        log.info("wait!");
+                        o.wait();
+                    }
+                    log.info("Thread awake!");
+                } catch (Exception e) {
+                    log.error("wait interruptibly error!", e);
+                }
+                System.out.println("thread end!");
+            }
+        });
+        thread.start();
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        thread.interrupt();
+    }
+    /**
+     * 2019-12-19 10:58:00,766 INFO  [Thread-0] [InterruptSceneDemo.java:214] : entrant synchronized!
+     * 2019-12-19 10:58:00,768 INFO  [Thread-0] [InterruptSceneDemo.java:215] : wait!
+     * 2019-12-19 10:58:02,767 ERROR [Thread-0] [InterruptSceneDemo.java:220] : wait interruptibly error!
+     * java.lang.InterruptedException
+     * at java.lang.Object.wait(Native Method)
+     * at java.lang.Object.wait(Object.java:502)
+     * at interrupt.InterruptSceneDemo$6.run(InterruptSceneDemo.java:216)
+     * at java.lang.Thread.run(Thread.java:748)
+     * thread end!
+     */
+
+    /**
+     * tryLock在获取锁是会检查中断标志位，如果有，则直接抛出中断错误~
+     * 按源码来看，在等待获取锁的loop中，也是会检查中断标志位的，一但有中断标志位设置为true，则抛出中断异常~ ... 不过这种场景比较难造 =。=
+     */
+    private void demo7TrylockWaitingInterruptDemo() {
+        final Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    log.info("entrant lockInterruptibly!");
+                    long begin = System.currentTimeMillis();
+                    int count = 0;
+                    while (true) {
+                        if ((System.currentTimeMillis() - begin) > 1000) {
+                            count++;
+                            begin = System.currentTimeMillis();
+                            log.info("looping ~" + count);
+                            if (count >= 2) {
+                                break;
+                            }
+                        }
+                    }
+                    lock.tryLock(3, TimeUnit.SECONDS);
+                    log.info("entrant TrylockWaiting!");
+
+                } catch (Exception e) {
+                    log.error("TrylockWaiting error!", e);
+                } finally {
+                    lock.unlock();
+                    log.info("TrylockWaiting unlock!");
+                }
+                System.out.println("thread end!");
+            }
+        });
+        thread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        thread.interrupt();
+    }
+    /**
+     2019-12-19 11:09:51,756 INFO  [Thread-0] [InterruptSceneDemo.java:255] : entrant lockInterruptibly!
+     2019-12-19 11:09:52,758 INFO  [Thread-0] [InterruptSceneDemo.java:262] : looping ~1
+     2019-12-19 11:09:53,759 INFO  [Thread-0] [InterruptSceneDemo.java:262] : looping ~2
+     2019-12-19 11:09:54,760 INFO  [Thread-0] [InterruptSceneDemo.java:262] : looping ~3
+     2019-12-19 11:09:55,761 INFO  [Thread-0] [InterruptSceneDemo.java:262] : looping ~4
+     2019-12-19 11:09:55,762 ERROR [Thread-0] [InterruptSceneDemo.java:272] : TrylockWaiting error!
+     java.lang.InterruptedException
+     at java.util.concurrent.locks.AbstractQueuedSynchronizer.tryAcquireNanos(AbstractQueuedSynchronizer.java:1245)
+     at java.util.concurrent.locks.ReentrantLock.tryLock(ReentrantLock.java:442)
+     at interrupt.InterruptSceneDemo$7.run(InterruptSceneDemo.java:268)
+     at java.lang.Thread.run(Thread.java:748)
+     Exception in thread "Thread-0" java.lang.IllegalMonitorStateException
+     at java.util.concurrent.locks.ReentrantLock$Sync.tryRelease(ReentrantLock.java:151)
+     at java.util.concurrent.locks.AbstractQueuedSynchronizer.release(AbstractQueuedSynchronizer.java:1261)
+     at java.util.concurrent.locks.ReentrantLock.unlock(ReentrantLock.java:457)
+     at interrupt.InterruptSceneDemo$7.run(InterruptSceneDemo.java:274)
+     at java.lang.Thread.run(Thread.java:748)
+     */
+    /**
+     2019-12-19 11:12:38,189 INFO  [Thread-0] [InterruptSceneDemo.java:255] : entrant lockInterruptibly!
+     2019-12-19 11:12:39,192 INFO  [Thread-0] [InterruptSceneDemo.java:262] : looping ~1
+     2019-12-19 11:12:39,192 INFO  [Thread-0] [InterruptSceneDemo.java:269] : entrant TrylockWaiting!
+     2019-12-19 11:12:39,192 INFO  [Thread-0] [InterruptSceneDemo.java:275] : TrylockWaiting unlock!
+     thread end!
+     */
+
+    /**
+     * main test
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         InterruptSceneDemo demo = new InterruptSceneDemo();
         //demo.demo1SleepInterruptDemo();
         //demo.demo2SynchronizedSleepInterruptDemo();
         //demo.demo3ConditionInterruptDemo();
         //demo.demo4ParkInterruptDemo();
-        demo.demo5ConditionInterruptDemo();
+        //demo.demo5LockInterruptiblyRunningInterruptDemo();
+        //demo.demo6WaitInterruptDemo();
+        demo.demo7TrylockWaitingInterruptDemo();
     }
 }
